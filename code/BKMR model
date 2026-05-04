@@ -1,0 +1,8 @@
+# BKMR_example.R
+# Example: Bayesian Kernel Machine Regression (BKMR) for repeated-measures data
+# This script demonstrates how to fit BKMR with a random intercept for
+# individual ID, using simulated data. In the actual analysis, exposures
+# were pre-selected via LME + DSA variable selection.
+
+library(bkmr)
+
