@@ -2,7 +2,7 @@
 # Example: DSA variable selection across multiple outcomes and random seeds
 
 library(DSA)
-
+ 
 # Define your data (replace 'your_data' with your dataframe)
 # Data should contain outcome variables and all candidate exposure variables
 outcomes  <- c("Out1", "Out2", "Out3")   # replace with your outcome names
