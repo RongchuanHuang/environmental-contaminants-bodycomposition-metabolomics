@@ -3,7 +3,7 @@
 # Replace 'your_data' with your actual dataframe
 
 library(bkmr)
-
+ 
 # Define variables
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
