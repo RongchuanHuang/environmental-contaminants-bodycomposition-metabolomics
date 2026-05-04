@@ -1,0 +1,49 @@
+# DSA_example.R
+# Example: DSA variable selection on simulated multi-outcome data
+
+library(DSA)
+
+# ---------------------------
+# 1. Simulate data
+# ---------------------------
+set.seed(2025)
+n <- 300
+exposures <- paste0("Exp", 1:97)
+sim_data <- as.data.frame(matrix(rnorm(n * 97), nrow = n))
+names(sim_data) <- exposures
+
+# Simulate 3 outcomes (replace with your actual outcome names)
+sim_data$Out1 <- with(sim_data, 0.3 * Exp1 + 0.2 * Exp5 + rnorm(n))
+sim_data$Out2 <- with(sim_data, -0.4 * Exp3 + 0.5 * Exp10 + rnorm(n))
+sim_data$Out3 <- with(sim_data, 0.1 * Exp20 - 0.2 * Exp30 + rnorm(n))
+outcomes <- c("Out1", "Out2", "Out3")
+
+# ---------------------------
+# 2. Random seeds for stability analysis
+# ---------------------------
+# In real analysis we used 1000 seeds; 
+seeds <- sample(1:10000, 1000, replace = FALSE)
+
+# ---------------------------
+# 3. Run DSA over outcomes and seeds
+# ---------------------------
+dsa_results <- list()
+
+for (out in outcomes) {
+  dsa_results[[out]] <- list()
+  for (s in seeds) {
+    data_temp <- sim_data[, c(out, exposures)]
+    formula   <- as.formula(paste(out, "~ 1"))
+    
+    dsa_results[[out]][[as.character(s)]] <- DSA(
+      formula      = formula,
+      data         = data_temp,
+      maxsize      = 10,
+      maxorderint  = 1,
+      maxsumofpow  = 1,
+      vfold        = 5,
+      family       = "gaussian",
+      seed         = s
+    )
+  }
+}
