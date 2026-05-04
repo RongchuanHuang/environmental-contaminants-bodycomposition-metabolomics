@@ -1,0 +1,56 @@
+# MMA_example.R
+# Example: Multiple Mediation Analysis (MMA) for high-dimensional mediators
+
+library(mma)
+
+# Define covariates (same set as in LME modeling)
+covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
+                "Smoke", "Drink", "Exercise", "Group",
+                "Hypertension", "Hyperlipidemia", "Diabetes")
+
+# Assume you have pre-selected exposure-outcome-mediator combinations
+# based on CIT or other criteria. Here is an example structure:
+combos <- data.frame(
+  outcome  = "Out1",
+  exposure = "E1",
+  mediators = I(list(c("M1", "M2")))  # list-column of mediator names
+)
+
+# Loop over each combination
+mma_models <- list()
+for (i in 1:nrow(combos)) {
+  out  <- combos$outcome[i]
+  expo <- combos$exposure[i]
+  meds <- combos$mediators[[i]]
+  
+  # Prepare data
+  y    <- your_data[[out]]
+  pred <- your_data[[expo]]
+  M    <- as.data.frame(your_data[, meds])
+  C    <- your_data[, covariates]
+  
+  # Data organization for mma
+  data_org <- data.org(
+    x = M,
+    y = y,
+    pred = pred,
+    mediator = 1:ncol(M),
+    cova = C,
+    alpha = 1,
+    alpha2 = 1
+  )
+  
+  # Fit multiple mediation model
+  mma_models[[out]][[expo]] <- mma(
+    x = M,
+    y = y,
+    pred = pred,
+    mediator = 1:ncol(M),
+    cova = C,
+    alpha = 1,
+    alpha2 = 1,
+    n = 20,
+    n2 = 1000, ## the number of times of bootstrap resampling
+    testtype = 1
+  )
+}
