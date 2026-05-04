@@ -1,0 +1,18 @@
+# LME建模 ####
+library(lmerTest)
+# 示例变量（实际分析中为对应的真实变量名）
+outcome   <- "BodyComp"
+exposure  <- "Exposure" 
+covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
+                "Smoke", "Drink", "Exercise", "Group",
+                "Hypertension", "Hyperlipidemia", "Diabetes")
+
+# 构建模型公式（固定效应 + 随机截距）
+formula <- as.formula(
+  paste0(outcome, " ~ ", exposure, " + ",
+         paste(covariates, collapse = " + "),
+         " + (1 | ID)")
+)
+
+# 拟合线性混合模型
+model <- lmer(formula, data = analysis_data, na.action = na.omit)
