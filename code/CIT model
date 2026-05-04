@@ -1,7 +1,7 @@
 # CIT_example.R
 # Example: Causal Inference Test (CIT) for mediation analysis
 # Replace 'your_data' with your actual dataframe
-
+ 
 library(cit)
 library(dplyr)
  
