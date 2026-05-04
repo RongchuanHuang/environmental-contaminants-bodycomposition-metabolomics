@@ -17,3 +17,4 @@ formula <- as.formula(
 
 # Fit linear mixed model
 model <- lmer(formula, data = analysis_data, na.action = na.omit)
+ 
