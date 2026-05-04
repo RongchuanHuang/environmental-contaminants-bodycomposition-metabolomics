@@ -1,8 +1,34 @@
 # BKMR_example.R
-# Example: Bayesian Kernel Machine Regression (BKMR) for repeated-measures data
-# This script demonstrates how to fit BKMR with a random intercept for
-# individual ID, using simulated data. In the actual analysis, exposures
-# were pre-selected via LME + DSA variable selection.
+# Example: Bayesian Kernel Machine Regression (BKMR) for mixture analysis
+# Replace 'your_data' with your actual dataframe
 
 library(bkmr)
 
+# Define variables
+covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
+                "Smoke", "Drink", "Exercise", "Group",
+                "Hypertension", "Hyperlipidemia", "Diabetes")
+
+outcome   <- "BFM"                          # replace with your outcome name
+exposures <- c("Exp1", "Exp2", "Exp3")      # replace with your selected exposures
+
+# Prepare matrices
+Z <- as.matrix(your_data[, exposures])
+y <- as.matrix(your_data[, outcome])
+X <- as.matrix(your_data[, covariates])
+ID <- your_data$ID
+
+# Fit BKMR with random intercept for repeated measures
+fit <- kmbayes(
+  y = y, 
+  Z = Z, 
+  X = X, 
+  iter = 10000, 
+  id = ID,
+  verbose = FALSE, 
+  varsel = TRUE
+)
+
+# Check results
+summary(fit)
+ExtractPIPs(fit)      # posterior inclusion probabilities
