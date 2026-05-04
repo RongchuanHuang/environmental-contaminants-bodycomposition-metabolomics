@@ -4,7 +4,7 @@
 
 library(cit)
 library(dplyr)
-
+ 
 # Define your covariates (same set as in LME modeling)
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
