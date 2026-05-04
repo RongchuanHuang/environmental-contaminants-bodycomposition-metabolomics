@@ -2,7 +2,7 @@
 # Example: Multiple Mediation Analysis (MMA) for high-dimensional mediators
 
 library(mma)
-
+ 
 # Define covariates (same set as in LME modeling)
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
