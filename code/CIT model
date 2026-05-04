@@ -1,0 +1,47 @@
+# CIT_example.R
+# Example: Causal Inference Test (CIT) for mediation analysis
+# Replace 'your_data' with your actual dataframe
+
+library(cit)
+library(dplyr)
+
+# Define your covariates (same set as in LME modeling)
+covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
+                "Smoke", "Drink", "Exercise", "Group",
+                "Hypertension", "Hyperlipidemia", "Diabetes")
+
+# Define exposure-mediator-outcome combinations to test
+# Example structure; replace with your own hypotheses
+combos <- data.frame(
+  exposure = c("E1", "E1", "E2"),
+  mediator = c("M1", "M2", "M2"),
+  outcome  = c("Out1", "Out1", "Out2"),
+  stringsAsFactors = FALSE
+)
+
+# Run CIT for each combination
+CIT_results <- data.frame()
+for (i in 1:nrow(combos)) {
+  fit <- cit.cp(
+    L = your_data[[combos$exposure[i]]],
+    G = your_data[[combos$mediator[i]]],
+    T = your_data[[combos$outcome[i]]],
+    C = your_data[, covariates],
+    rseed = 2025
+  )
+  CIT_results <- rbind(CIT_results,
+    data.frame(
+      exposure = combos$exposure[i],
+      mediator = combos$mediator[i],
+      outcome  = combos$outcome[i]
+    )
+  )
+}
+
+# Multiple testing correction (per exposure-outcome pair)
+CIT_results <- CIT_results %>%
+  group_by(exposure, outcome) %>%
+  mutate(p_fdr = p.adjust(p_cit, method = "BH")) %>%
+  ungroup()
+
+print(CIT_results)
