@@ -1,9 +1,8 @@
 # BKMR_example.R
 # Example: Bayesian Kernel Machine Regression (BKMR) for mixture analysis
-# Replace 'your_data' with your actual dataframe
 
 library(bkmr)
- 
+
 # Define variables
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
@@ -13,10 +12,10 @@ outcome   <- "BFM"                          # replace with your outcome name
 exposures <- c("Exp1", "Exp2", "Exp3")      # replace with your selected exposures
 
 # Prepare matrices
-Z <- as.matrix(your_data[, exposures])
-y <- as.matrix(your_data[, outcome])
-X <- as.matrix(your_data[, covariates])
-ID <- your_data$ID
+Z <- as.matrix(data[, exposures])
+y <- as.matrix(data[, outcome])
+X <- as.matrix(data[, covariates])
+ID <- data$ID
 
 # Fit BKMR with random intercept for repeated measures
 fit <- kmbayes(
@@ -29,6 +28,4 @@ fit <- kmbayes(
   varsel = TRUE
 )
 
-# Check results
-summary(fit)
-ExtractPIPs(fit)      # posterior inclusion probabilities
+
