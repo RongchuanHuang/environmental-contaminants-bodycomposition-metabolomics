@@ -10,15 +10,6 @@ covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
                 "Hypertension", "Hyperlipidemia", "Diabetes")
 
-# Define exposure-mediator-outcome combinations to test
-# Example structure; replace with your own hypotheses
-combos <- data.frame(
-  exposure = c("E1", "E1", "E2"),
-  mediator = c("M1", "M2", "M2"),
-  outcome  = c("Out1", "Out1", "Out2"),
-  stringsAsFactors = FALSE
-)
-
 # Run CIT for each combination
 CIT_results <- data.frame()
 for (i in 1:nrow(combos)) {
