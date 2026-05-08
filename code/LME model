@@ -2,8 +2,8 @@
 library(lmerTest)
 
 # Example variables (replace with actual variable names in real analysis)
-outcome   <- "BodyComp"
-exposure  <- "Exposure" 
+outcome   <- "BFM"
+exposure  <- "PFHxS" 
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
                 "Hypertension", "Hyperlipidemia", "Diabetes")
