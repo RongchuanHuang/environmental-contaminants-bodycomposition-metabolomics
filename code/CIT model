@@ -1,7 +1,6 @@
 # CIT_example.R
 # Example: Causal Inference Test (CIT) for mediation analysis
-# Replace 'your_data' with your actual dataframe
- 
+
 library(cit)
 library(dplyr)
  
@@ -10,29 +9,23 @@ covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
                 "Hypertension", "Hyperlipidemia", "Diabetes")
 
-# Run CIT for each combination
-CIT_results <- data.frame()
-for (i in 1:nrow(combos)) {
-  fit <- cit.cp(
-    L = your_data[[combos$exposure[i]]],
-    G = your_data[[combos$mediator[i]]],
-    T = your_data[[combos$outcome[i]]],
-    C = your_data[, covariates],
-    rseed = 2025
-  )
-  CIT_results <- rbind(CIT_results,
-    data.frame(
-      exposure = combos$exposure[i],
-      mediator = combos$mediator[i],
-      outcome  = combos$outcome[i]
-    )
-  )
-}
+# Run CIT model
 
-# Multiple testing correction (per exposure-outcome pair)
-CIT_results <- CIT_results %>%
-  group_by(exposure, outcome) %>%
-  mutate(p_fdr = p.adjust(p_cit, method = "BH")) %>%
-  ungroup()
+   L = data[["PFHxS"]],
+   G = data[["M1"]],  # "M1" is the abbreviation of metabolite/lipid
+   T = data[["BFM"]],
+   C = data[, covariates],
 
-print(CIT_results)
+  model <- cit.cp(L_data, G_data, T_data, C_data, rseed = 2025)     
+  df_table <- as.data.frame(t(as.data.frame(model))) 
+
+# Run CIT model for all metabolite, and bindrows for the df_table
+  CIT_table = tibble()
+  df_table <- as.data.frame(t(as.data.frame(model)))  ## 
+  CIT_table <- rbind(CIT_table, df_table) 
+
+# FDR Correction
+CIT_table_2 = CIT_table %>% mutate(PFDR = p.adjust(p_cit, "BH"))
+
+  
+
