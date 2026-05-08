@@ -5,70 +5,42 @@
 library(mgcv)
 library(ggplot2)
 
-# Define variables (replace with your own data and covariates)
 covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
                 "Smoke", "Drink", "Exercise", "Group",
                 "Hypertension", "Hyperlipidemia", "Diabetes")
-outcomes  <- c("Out1", "Out2", "Out3")      # body composition outcomes
-exposures <- c("Exp1", "Exp2", "Exp3")      # exposures selected via DSA
 
 # Ensure ID is a factor for the random effect
-your_data$ID <- as.factor(your_data$ID)
+data$ID <- as.factor(data$ID)
 
-# Loop over outcomes and their associated exposures
-GAM_plots <- list()
-idx <- 0
-for (out in outcomes) {
-  # In real analysis: filter by outcome-specific selected exposures from DSA results
-  expos <- exposures   # here we assume all exposures apply to all outcomes
-  
-  for (expo in expos) {
-    idx <- idx + 1
-    
-    # Formula: outcome ~ s(exposure, bs="cr", k=3) + covariates + s(ID, bs="re")
-    gam_formula <- as.formula(
-      paste(out, "~ s(", expo, ", bs='cr', k=3) +",
+# model
+gam_formula <- as.formula(paste("BFM", "~ s(", "PFHxS", ", bs='cr', k=3) +",
             paste(covariates, collapse = "+"),
-            "+ s(ID, bs='re')")
-    )
+            "+ s(ID, bs='re')"))
+
+model <- gam(gam_formula, data = your_data, family = gaussian(), method = "REML")
     
-    # Fit GAM
-    model <- gam(gam_formula, data = your_data, family = gaussian(), method = "REML")
+# plot
+p_nonlinear <- summary(model)$s.pv[1]
+p_lab <- ifelse(p_nonlinear < 0.001, "<0.001", sprintf("%.3f", p_nonlinear))
     
-    # Extract nonlinear p-value for the smooth term
-    p_nonlinear <- summary(model)$s.pv[1]
-    p_lab <- ifelse(p_nonlinear < 0.001, "<0.001", sprintf("%.3f", p_nonlinear))
+pred <- predict(model, type = "terms", se.fit = TRUE)
+smooth_col <- paste0("s(", "PFHxS", ")")
+fit <- pred$fit[, smooth_col]
+se  <- pred$se.fit[, smooth_col]
+fit_centered <- fit + median(model$fitted.values) - median(fit)
     
-    # Predict the smooth component (centered)
-    pred <- predict(model, type = "terms", se.fit = TRUE)
-    smooth_col <- paste0("s(", expo, ")")
-    fit <- pred$fit[, smooth_col]
-    se  <- pred$se.fit[, smooth_col]
-    fit_centered <- fit + median(model$fitted.values) - median(fit)
-    
-    # Build data for plotting
-    plot_dat <- data.frame(
-      x = your_data[[expo]],
+plot_dat <- data.frame(
+      x = data[[expo]],
       fit = fit_centered,
       lower = fit_centered - 1.96 * se,
       upper = fit_centered + 1.96 * se
     )
     
-    # Create ggplot
-    p <- ggplot(plot_dat, aes(x = x, y = fit)) +
+# Create ggplot
+ p <- ggplot(plot_dat, aes(x = x, y = fit)) +
       geom_line(color = "blue", size = 1) +
       geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, fill = "#6BAED6") +
       geom_rug(sides = "b", alpha = 0.5) +
-      labs(x = expo, y = paste("Centered smooth of", out),
-           title = paste(out, "vs", expo)) +
-      annotate("text", x = -Inf, y = Inf,
-               label = sprintf('italic(P)[nonlinear] == %s', p_lab),
-               hjust = -0.1, vjust = 2, size = 5, parse = TRUE) +
+      labs(x = "PFHxS", y = "BFM") +
       theme_classic()
     
-    GAM_plots[[idx]] <- p
-  }
-}
-
-# Combine plots (e.g., 3 columns)
-gridExtra::grid.arrange(grobs = GAM_plots, ncol = 3)
