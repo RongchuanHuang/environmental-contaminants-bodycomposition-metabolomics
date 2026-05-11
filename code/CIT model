@@ -11,10 +11,10 @@ covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
 
 # Run CIT model
 
-   L = data[["PFHxS"]],
-   G = data[["M1"]],  # "M1" is the abbreviation of metabolite/lipid
-   T = data[["BFM"]],
-   C = data[, covariates],
+   L_data = data[["PFHxS"]]
+   G_data = data[["M1"]]  # "M1" is the abbreviation of metabolite/lipid
+   T_data = data[["BFM"]]
+   C_data = data[, covariates]
 
   model <- cit.cp(L_data, G_data, T_data, C_data, rseed = 2025)     
   df_table <- as.data.frame(t(as.data.frame(model))) 
