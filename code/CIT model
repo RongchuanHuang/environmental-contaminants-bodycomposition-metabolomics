@@ -20,8 +20,9 @@ covariates <- c("Age", "BMI", "DietScore", "Gender", "Education",
   df_table <- as.data.frame(t(as.data.frame(model))) 
 
 # Run CIT model for all metabolite, and bindrows for the df_table
+# Note: It is recommended that you write a for loop to model and merge the CIT results of all metabolites
   CIT_table = tibble()
-  df_table <- as.data.frame(t(as.data.frame(model)))  ## 
+  df_table <- as.data.frame(t(as.data.frame(model)))  
   CIT_table <- rbind(CIT_table, df_table) 
 
 # FDR Correction
